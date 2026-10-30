@@ -1,7 +1,7 @@
-version = 1
+version = 2
 
 cloudstream {
-    description = "Film domain publik dan Creative Commons dari Internet Archive (archive.org)"
+    description = "Film dan serial TV domain publik dan Creative Commons dari Internet Archive (archive.org)"
     authors = listOf("delimacode")
 
     /**
@@ -13,6 +13,6 @@ cloudstream {
      **/
     status = 1
 
-    tvTypes = listOf("Movie")
+    tvTypes = listOf("Movie", "TvSeries")
     language = "en"
 }
