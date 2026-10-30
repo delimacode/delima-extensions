@@ -8,7 +8,7 @@ lalu menerbitkannya ke branch `builds`.
 
 ## Cara kerja
 
-- Satu folder di root = satu provider (contoh: `ExampleProvider/`).
+- Satu folder di root = satu provider (contoh: `ArchiveProvider/`).
 - Folder provider wajib punya `build.gradle.kts`; `settings.gradle.kts` di root
   akan otomatis memasukkannya ke build, tidak perlu didaftarkan manual.
 - GitHub Actions (`.github/workflows/build.yml`) menjalankan
@@ -18,17 +18,14 @@ lalu menerbitkannya ke branch `builds`.
 ## Menambahkan repo ini ke CloudStream
 
 Di aplikasi CloudStream: Settings → Extensions → Add Repository, lalu isi URL
-mentah `plugins.json` dari branch `builds`:
+manifest `repo.json` dari branch `builds`:
 
 ```
-https://raw.githubusercontent.com/delimacode/delima-extensions/builds/plugins.json
+https://raw.githubusercontent.com/delimacode/delima-extensions/builds/repo.json
 ```
 
-Catatan penting: repo ini saat ini **Private**. CloudStream mengambil
-`plugins.json` dan `.cs3` tanpa autentikasi, jadi selama repo Private tautan di
-atas tidak bisa dibaca aplikasi. Sebelum dipakai di perangkat, visibilitas repo
-perlu diputuskan (mis. ubah ke Public). Keputusan itu disengaja ditunda, bukan
-kelalaian.
+Repo ini **Public**, jadi aplikasi bisa mengambil manifest, `plugins.json`, dan
+berkas `.cs3` langsung tanpa autentikasi.
 
 ## Menambah provider baru
 
@@ -41,8 +38,12 @@ kelalaian.
 
 Status di metadata provider: 0 = Down, 1 = Ok, 2 = Slow, 3 = Beta.
 
-## Isi fondasi saat ini
+## Isi saat ini
 
-- `ExampleProvider` — provider contoh bawaan template resmi (bukan provider
-  situs nyata), penanda bahwa rantai build bekerja.
-- Belum ada provider situs apa pun di repo ini.
+- `ArchiveProvider` — film domain publik dan Creative Commons dari Internet
+  Archive (archive.org): beranda berkategori, pencarian, detail, dan putar
+  langsung berkas mp4 dari server archive.org, lengkap dengan pilihan kualitas
+  dan subtitle `.srt` bila tersedia.
+
+Provider contoh bawaan template (`ExampleProvider`) sudah dihapus; ia hanya
+dipakai untuk membuktikan rantai build pada tahap fondasi.
