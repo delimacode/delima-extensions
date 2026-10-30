@@ -1,0 +1,43 @@
+[
+    {
+        "fileHash": "sha256-0504130e03898e19fa265bbed995977753638cf9ec68040c55b618e586b39a1d",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/delimacode/delima-extensions",
+        "fileSize": 24904,
+        "status": 1,
+        "language": "en",
+        "authors": [
+            "delimacode"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 2,
+        "internalName": "ArchiveProvider",
+        "description": "Film dan serial TV domain publik dan Creative Commons dari Internet Archive (archive.org)",
+        "url": "https://raw.githubusercontent.com/delimacode/delima-extensions/builds/ArchiveProvider.cs3",
+        "name": "ArchiveProvider"
+    },
+    {
+        "iconUrl": "https://z2.idlixku.com/favicon.ico",
+        "fileHash": "sha256-470e9efce9555e09f4a6d5466e3810a4996df4602cb5d7987e59f93ac1defac9",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/delimacode/delima-extensions",
+        "fileSize": 11054,
+        "status": 1,
+        "language": "id",
+        "authors": [
+            "delimacode"
+        ],
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "version": 1,
+        "internalName": "LilikProvider",
+        "description": "Provider Lilik (IDLIX) - Film & Serial subtitle Indonesia.",
+        "url": "https://raw.githubusercontent.com/delimacode/delima-extensions/builds/LilikProvider.cs3",
+        "name": "LilikProvider"
+    }
+]
