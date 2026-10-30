@@ -316,11 +316,11 @@ class ArchiveProvider : MainAPI() {
         if (!trimmed.contains("/details/")) return trimmed to null
         val id = identifierFromUrl(trimmed)
         val raw = Regex("[?&]ep=([^&]+)").find(trimmed)?.groupValues?.get(1)
-        val ep = raw?.let {
+        val ep = raw?.let { rawEp ->
             runCatching {
-                String(Base64.getUrlDecoder().decode(it), Charsets.UTF_8)
+                String(Base64.getUrlDecoder().decode(rawEp), Charsets.UTF_8)
             }.getOrElse {
-                runCatching { URLDecoder.decode(it, "UTF-8") }.getOrNull()
+                runCatching { URLDecoder.decode(rawEp, "UTF-8") }.getOrNull()
             }
         }
         return id to ep
