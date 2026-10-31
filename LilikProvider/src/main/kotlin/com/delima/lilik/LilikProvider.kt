@@ -58,14 +58,15 @@ class LilikProvider : MainAPI() {
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.Movie, TvType.TvSeries)
 
-    // Tambahkan /api secara manual di sini
+    // Menggunakan trik ?path= untuk menembus blokir sub-path InstaBox
     override val mainPage = mainPageOf(
-        "$mainUrl/api/movie/trending" to "Movie Trending",
-        "$mainUrl/api/series/trending" to "Series Trending"
+        "$mainUrl/?path=/movie/trending" to "Movie Trending",
+        "$mainUrl/?path=/series/trending" to "Series Trending"
     )
 
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
-        val response = app.get("${request.data}?page=$page").parsedSafe<IdlixResponse<List<MovieItem>>>()
+        // Karena URL sudah mengandung '?', kita gunakan '&page=' untuk menambahkan halaman
+        val response = app.get("${request.data}&page=$page").parsedSafe<IdlixResponse<List<MovieItem>>>()
         val items = response?.data ?: emptyList()
         val home = items.mapNotNull { it.toSearchResult() }
         return newHomePageResponse(request.name, home)
@@ -82,14 +83,13 @@ class LilikProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
-        // Tambahkan /api secara manual
-        val response = app.get("$mainUrl/api/search?q=$query").parsedSafe<IdlixResponse<List<MovieItem>>>()
+        val response = app.get("$mainUrl/?path=/search&q=$query").parsedSafe<IdlixResponse<List<MovieItem>>>()
         return response?.data?.mapNotNull { it.toSearchResult() } ?: emptyList()
     }
 
     override suspend fun load(url: String): LoadResponse {
-        // Tambahkan /api secara manual
-        val movieResponse = app.get("$mainUrl/api/movie/$url").parsedSafe<IdlixResponse<MovieDetail>>()
+        // Coba ambil sebagai Movie terlebih dahulu
+        val movieResponse = app.get("$mainUrl/?path=/movie/$url").parsedSafe<IdlixResponse<MovieDetail>>()
         if (movieResponse?.data != null) {
             val detail = movieResponse.data!!
             return newMovieLoadResponse(detail.title ?: "Unknown", url, TvType.Movie, url) {
@@ -99,9 +99,10 @@ class LilikProvider : MainAPI() {
             }
         }
         
-        // Tambahkan /api secara manual
-        val seriesResponse = app.get("$mainUrl/api/series/$url").parsedSafe<IdlixResponse<MovieDetail>>()
+        // Jika gagal/bukan movie, coba ambil sebagai Series
+        val seriesResponse = app.get("$mainUrl/?path=/series/$url").parsedSafe<IdlixResponse<MovieDetail>>()
         val series = seriesResponse?.data ?: throw ErrorLoadingException("Konten tidak ditemukan")
+        
         val episodes = series.seasons?.flatMap { season ->
             season.episodes?.map { ep ->
                 newEpisode("$url|season=${season.season}|episode=${ep.episode}") {
@@ -128,18 +129,18 @@ class LilikProvider : MainAPI() {
         val streamUrl: String?
 
         if (parts.size > 1) {
+            // Ekstraksi Link Series
             val season = parts[1].removePrefix("season=")
             val episode = parts[2].removePrefix("episode=")
-            // Tambahkan /api secara manual
-            val response = app.get("$mainUrl/api/series/$slug/season/$season/episode/$episode/stream")
+            val response = app.get("$mainUrl/?path=/series/$slug/season/$season/episode/$episode/stream")
                 .parsedSafe<IdlixResponse<StreamData>>()
             streamUrl = response?.data?.streamUrl
             response?.data?.subtitles?.forEach { sub ->
                 subtitleCallback(newSubtitleFile(sub.language ?: "Unknown", sub.url ?: ""))
             }
         } else {
-            // Tambahkan /api secara manual
-            val response = app.get("$mainUrl/api/movie/$slug/stream")
+            // Ekstraksi Link Movie
+            val response = app.get("$mainUrl/?path=/movie/$slug/stream")
                 .parsedSafe<IdlixResponse<StreamData>>()
             streamUrl = response?.data?.streamUrl
             response?.data?.subtitles?.forEach { sub ->
@@ -154,7 +155,7 @@ class LilikProvider : MainAPI() {
                 source = this.name,
                 name = this.name,
                 url = streamUrl,
-                type = ExtractorLinkType.M3U8
+                type = ExtractorLinkType.M3U8 // Ubah ke VIDEO jika nanti muncul error 3003
             ) {
                 this.referer = mainUrl
             }
